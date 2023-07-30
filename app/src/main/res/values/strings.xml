@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Hyrule Compendium</string>
+
+    <string name="game_title_botw">BREATH OF THE WILD</string>
+    <string name="game_title_totk">TEARS OF THE KINGDOM</string>
+
+    <string name="dialog_button_ok">OK</string>
+    <string name="dialog_button_cancel">Cancel</string>
+    <string name="dialog_message_fetch_error">Unable to get data from API.</string>
+
+    <string name="label_common_locations">Common Locations</string>
+    <string name="label_droppable_items">Droppable Items</string>
+    <string name="label_cooking_effect">Cooking Effect</string>
+    <string name="label_attack_power">Attack Power</string>
+    <string name="label_defense_power">Defense Power</string>
+
+    <string name="value_no_common_locations">No Common Locations</string>
+    <string name="value_none">None</string>
+    <string name="value_unknown">Unknown</string>
+
+    <string name="category_creatures">Creatures</string>
+    <string name="category_equipment">Equipment</string>
+    <string name="category_materials">Materials</string>
+    <string name="category_monsters">Monsters</string>
+    <string name="category_treasure">Treasure</string>
+
+</resources>
