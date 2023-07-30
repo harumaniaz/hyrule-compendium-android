@@ -1,8 +1,8 @@
 # hyrule-compendium-android
 
 Kotlin + Jetpack Composeで作成したAndroidアプリ。<br>
-アプリのテーマは[『ゼルダの伝説　BREATH OF THE WILD』](https://www.nintendo.co.jp/zelda/botw/index.html)で、[Hyrule Compendium API](https://gadhagod.github.io/Hyrule-Compendium-API/#/)からデータを取得している。<br>
-画面はリストと詳細のシンプルな構成で、リストにはフィルター機能を追加。<br>
+アプリのテーマは[『ゼルダの伝説　BREATH OF THE WILD』](https://www.nintendo.co.jp/zelda/botw/index.html)で、[Hyrule Compendium API](https://gadhagod.github.io/Hyrule-Compendium-API/#/)からデータを取得する。<br>
+画面はリストと詳細のシンプルな構成で、リストにはフィルター機能を実装。<br>
 
 ## Preview
 
