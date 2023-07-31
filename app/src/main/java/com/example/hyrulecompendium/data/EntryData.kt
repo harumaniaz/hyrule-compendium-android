@@ -1,15 +1,10 @@
-package com.example.hyrulecompendium.data.remote
+package com.example.hyrulecompendium.data
 
 import com.squareup.moshi.Json
 
-data class EntriesData(
+data class EntriesDataResponse(
     @field:Json(name = "data")
     val data: List<Entry>
-)
-
-data class EntryData(
-    @field:Json(name = "data")
-    val data: Entry
 )
 
 data class Entry(

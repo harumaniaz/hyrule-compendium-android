@@ -7,7 +7,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-object ApiModule {
+object ApiProvider {
     private fun provideLogging() = HttpLoggingInterceptor().apply {
         level = if (BuildConfig.DEBUG)
             HttpLoggingInterceptor.Level.BODY

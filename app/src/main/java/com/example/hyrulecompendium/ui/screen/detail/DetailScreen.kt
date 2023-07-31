@@ -31,7 +31,7 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.hyrulecompendium.R
 import com.example.hyrulecompendium.data.CategoryType
-import com.example.hyrulecompendium.data.remote.Entry
+import com.example.hyrulecompendium.data.Entry
 import com.example.hyrulecompendium.ui.component.HcScaffold
 import com.example.hyrulecompendium.ui.component.HcTopBar
 import com.example.hyrulecompendium.ui.theme.HcTheme
@@ -59,7 +59,7 @@ fun DetailScreen(
 
 @Composable
 private fun DetailContent(
-    uiState: DetailUiState,
+    uiState: DetailViewModel.UiState,
     navigateUp: () -> Unit = {}
 ) {
     HcScaffold(
@@ -280,7 +280,7 @@ private fun ValueText(text: String) {
 @Preview
 @Composable
 private fun DetailContentPreview() {
-    val uiState = DetailUiState(
+    val uiState = DetailViewModel.UiState(
         entry = Entry(
             id = 62,
             name = "armored carp",

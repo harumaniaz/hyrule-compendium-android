@@ -18,8 +18,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import com.example.hyrulecompendium.R
 import com.example.hyrulecompendium.data.CategoryType
+import com.example.hyrulecompendium.data.Entry
 import com.example.hyrulecompendium.data.GameType
-import com.example.hyrulecompendium.data.remote.Entry
 import com.example.hyrulecompendium.ui.component.CategoryFilterGroup
 import com.example.hyrulecompendium.ui.component.EntryRow
 import com.example.hyrulecompendium.ui.component.HcScaffold
@@ -42,8 +42,7 @@ fun HomeScreen(
     LaunchedEffect(uiEvent) {
         when (uiEvent) {
             is HomeViewModel.UiEvent.FetchError -> {
-                errorMessage = (uiEvent as HomeViewModel.UiEvent.FetchError).detail
-                    ?: context.getString(R.string.dialog_message_fetch_error)
+                errorMessage = context.getString(R.string.dialog_message_fetch_error)
             }
 
             else -> {}
@@ -84,7 +83,7 @@ private fun HomeContent(
         isLoading = uiState.isLoading
     ) {
         CategoryFilterGroup(
-            categoryList = uiState.categoryList,
+            categories = uiState.categories,
             selectedItem = uiState.selectedCategory,
             onClickItem = onClickCategory
         )
@@ -94,7 +93,7 @@ private fun HomeContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             items(
-                items = uiState.entryList,
+                items = uiState.entries,
                 key = { item -> item.id }
             ) { entry ->
                 EntryRow(
@@ -113,7 +112,7 @@ private fun HomeContentPreview() {
     CategoryType.initialize(LocalContext.current)
 
     val uiState = HomeViewModel.UiState(
-        entryList = listOf(
+        entries = listOf(
             Entry(
                 id = 203,
                 name = "apple",
