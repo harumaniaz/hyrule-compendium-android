@@ -11,15 +11,16 @@ class EntryRepository(
 ) {
     private val entriesMutex = Mutex()
     private var cachedEntries: List<Entry> = emptyList()
+    private var cachedType: GameType? = null
 
     suspend fun getAllEntries(
-        refresh: Boolean = false,
-        type: GameType = GameType.BOTW
+        type: GameType
     ): List<Entry> {
-        if (refresh || cachedEntries.isEmpty()) {
+        if (cachedEntries.isEmpty() || type != cachedType) {
             val networkResult = remoteDataSource.getAllEntries(type)
             entriesMutex.withLock {
                 cachedEntries = networkResult
+                cachedType = type
             }
         }
         return entriesMutex.withLock { cachedEntries }

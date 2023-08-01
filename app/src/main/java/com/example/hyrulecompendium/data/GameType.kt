@@ -15,7 +15,7 @@ enum class GameType(val id: Int, val titleId: Int) {
             GameType.values().forEach { it.title = context.getString(it.titleId) }
         }
 
-        fun from(value: Int): GameType =
-            GameType.values().firstOrNull { it.id == value } ?: BOTW
+        fun from(id: Int): GameType? =
+            GameType.values().firstOrNull { it.id == id }
     }
 }

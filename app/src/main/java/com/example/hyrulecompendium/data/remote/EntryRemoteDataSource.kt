@@ -10,9 +10,7 @@ class EntryRemoteDataSource(
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val apiService: ApiService
 ) {
-    suspend fun getAllEntries(
-        type: GameType = GameType.BOTW
-    ): List<Entry> = withContext(defaultDispatcher) {
+    suspend fun getAllEntries(type: GameType): List<Entry> = withContext(defaultDispatcher) {
         apiService.getAllEntries(game = type.id).data
     }
 }

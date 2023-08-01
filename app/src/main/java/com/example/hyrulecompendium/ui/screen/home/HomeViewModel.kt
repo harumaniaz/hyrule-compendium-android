@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.hyrulecompendium.data.CategoryType
 import com.example.hyrulecompendium.data.Entry
+import com.example.hyrulecompendium.data.GameType
 import com.example.hyrulecompendium.data.repository.EntryRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +25,8 @@ class HomeViewModel(
     )
 
     sealed class UiEvent {
-        object None : UiEvent()
+        class None : UiEvent()
+        class CategoryChanged : UiEvent()
         class FetchError : UiEvent()
     }
 
@@ -44,7 +46,7 @@ class HomeViewModel(
         _uiState.update { it.copy(isLoading = true) }
 
         viewModelScope.launch {
-            runCatching { repository.getAllEntries() }
+            runCatching { repository.getAllEntries(type = GameType.BOTW) }
                 .onSuccess { result ->
                     allEntries = result.sortedBy { it.id }
 
@@ -70,6 +72,10 @@ class HomeViewModel(
                 entries = entries,
                 selectedCategory = category
             )
+        }
+
+        viewModelScope.launch {
+            _uiEvent.emit(UiEvent.CategoryChanged())
         }
     }
 }

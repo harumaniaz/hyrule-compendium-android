@@ -3,6 +3,7 @@ package com.example.hyrulecompendium.ui.screen.home
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -35,42 +36,43 @@ fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val uiEvent by viewModel.uiEvent.collectAsState(initial = HomeViewModel.UiEvent.None)
-    var errorMessage by remember { mutableStateOf<String?>(null) }
+    val uiEvent by viewModel.uiEvent.collectAsState(initial = HomeViewModel.UiEvent.None())
 
+    HomeContent(
+        uiState = uiState,
+        uiEvent = uiEvent,
+        onNavigateToDetail = {
+            navController.navigate(ScreenRoute.detail(it.toString()))
+        },
+        onClickCategory = viewModel::setCategoryFilter
+    )
+}
+
+@Composable
+private fun HomeContent(
+    uiState: HomeViewModel.UiState,
+    uiEvent: HomeViewModel.UiEvent,
+    onNavigateToDetail: (Int) -> Unit = {},
+    onClickCategory: (CategoryType) -> Unit = {},
+) {
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    val listState = rememberLazyListState()
     val context = LocalContext.current
+
     LaunchedEffect(uiEvent) {
         when (uiEvent) {
             is HomeViewModel.UiEvent.FetchError -> {
                 errorMessage = context.getString(R.string.dialog_message_fetch_error)
             }
 
+            is HomeViewModel.UiEvent.CategoryChanged -> {
+                listState.scrollToItem(index = 0)
+            }
+
             else -> {}
         }
     }
 
-    HomeContent(
-        uiState = uiState,
-        onNavigateToDetail = {
-            navController.navigate(ScreenRoute.detail(it.toString()))
-        },
-        onClickCategory = viewModel::setCategoryFilter
-    )
-
-    errorMessage?.let {
-        SimpleAlertDialog(
-            message = it,
-            confirmButtonText = stringResource(id = R.string.dialog_button_ok),
-            onConfirmClick = { errorMessage = null })
-    }
-}
-
-@Composable
-private fun HomeContent(
-    uiState: HomeViewModel.UiState,
-    onNavigateToDetail: (Int) -> Unit = {},
-    onClickCategory: (CategoryType) -> Unit = {},
-) {
     HcScaffold(
         topBar = {
             HcTopBar(
@@ -90,6 +92,7 @@ private fun HomeContent(
 
         LazyColumn(
             modifier = Modifier.fillMaxWidth(),
+            state = listState,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             items(
@@ -102,6 +105,13 @@ private fun HomeContent(
                 )
             }
         }
+    }
+
+    errorMessage?.let {
+        SimpleAlertDialog(
+            message = it,
+            confirmButtonText = stringResource(id = R.string.dialog_button_ok),
+            onConfirmClick = { errorMessage = null })
     }
 }
 
@@ -141,6 +151,9 @@ private fun HomeContentPreview() {
     )
 
     HcTheme {
-        HomeContent(uiState = uiState)
+        HomeContent(
+            uiState = uiState,
+            uiEvent = HomeViewModel.UiEvent.None()
+        )
     }
 }
