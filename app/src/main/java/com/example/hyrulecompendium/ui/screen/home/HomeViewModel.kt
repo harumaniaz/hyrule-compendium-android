@@ -3,11 +3,9 @@ package com.example.hyrulecompendium.ui.screen.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.hyrulecompendium.data.CategoryType
-import com.example.hyrulecompendium.data.remote.ApiError
-import com.example.hyrulecompendium.data.remote.ApiException
-import com.example.hyrulecompendium.data.remote.ApiSuccess
-import com.example.hyrulecompendium.data.remote.Entry
-import com.example.hyrulecompendium.data.repository.ApiRepository
+import com.example.hyrulecompendium.data.Entry
+import com.example.hyrulecompendium.data.GameType
+import com.example.hyrulecompendium.data.repository.EntryRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -17,18 +15,19 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class HomeViewModel(
-    private val repository: ApiRepository
+    private val repository: EntryRepository
 ) : ViewModel() {
     data class UiState(
-        var entryList: List<Entry> = emptyList(),
-        var categoryList: List<CategoryType> = listOf(*CategoryType.values()),
+        var entries: List<Entry> = emptyList(),
+        var categories: List<CategoryType> = listOf(*CategoryType.values()),
         var selectedCategory: CategoryType = CategoryType.CREATURES,
         var isLoading: Boolean = false
     )
 
     sealed class UiEvent {
-        object None : UiEvent()
-        class FetchError(val detail: String?) : UiEvent()
+        class None : UiEvent()
+        class CategoryChanged : UiEvent()
+        class FetchError : UiEvent()
     }
 
     private val _uiState = MutableStateFlow(UiState())
@@ -36,6 +35,8 @@ class HomeViewModel(
 
     private val _uiEvent = MutableSharedFlow<UiEvent>()
     val uiEvent = _uiEvent.asSharedFlow()
+
+    private var allEntries: List<Entry> = emptyList()
 
     init {
         getAllEntries()
@@ -45,24 +46,18 @@ class HomeViewModel(
         _uiState.update { it.copy(isLoading = true) }
 
         viewModelScope.launch {
-            when (val result = repository.getAllEntries()) {
-                is ApiSuccess -> {
-                    val entryList = result.data.data
+            runCatching { repository.getAllEntries(type = GameType.BOTW) }
+                .onSuccess { result ->
+                    allEntries = result.sortedBy { it.id }
+
+                    val entries = allEntries
                         .filter { it.category == _uiState.value.selectedCategory.id }
-                        .sortedBy { it.id }
-                    _uiState.update { it.copy(entryList = entryList) }
+                    _uiState.update { it.copy(entries = entries) }
                 }
-
-                is ApiError -> {
-                    Timber.e("code=${result.code} message=${result.message}")
-                    _uiEvent.emit(UiEvent.FetchError(result.message))
+                .onFailure {
+                    Timber.e(it)
+                    _uiEvent.emit(UiEvent.FetchError())
                 }
-
-                is ApiException -> {
-                    Timber.e(result.exception)
-                    _uiEvent.emit(UiEvent.FetchError(result.exception.message))
-                }
-            }
 
             _uiState.update { it.copy(isLoading = false) }
         }
@@ -71,16 +66,16 @@ class HomeViewModel(
     fun setCategoryFilter(category: CategoryType) {
         if (_uiState.value.selectedCategory == category) return
 
-        val entryList = repository.getAllEntriesInCache()
-            .filter { it.category == category.id }
-            .sortedBy { it.id }
-
+        val entries = allEntries.filter { it.category == category.id }
         _uiState.update {
             it.copy(
-                entryList = entryList,
+                entries = entries,
                 selectedCategory = category
             )
         }
 
+        viewModelScope.launch {
+            _uiEvent.emit(UiEvent.CategoryChanged())
+        }
     }
 }

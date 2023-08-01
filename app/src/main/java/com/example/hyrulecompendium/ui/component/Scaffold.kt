@@ -20,21 +20,28 @@ fun HcScaffold(
     isLoading: Boolean = false,
     content: @Composable () -> Unit = {},
 ) {
-    Scaffold(
-        topBar = topBar,
-        bottomBar = bottomBar
-    ) { padding ->
-        Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            topBar = topBar,
+            bottomBar = bottomBar
+        ) { padding ->
             Column(modifier = Modifier.padding(padding)) {
                 content()
             }
-
-            if (isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center),
-                    color = AccentColor
-                )
-            }
         }
+
+        if (isLoading) {
+            LoadingBar()
+        }
+    }
+}
+
+@Composable
+fun LoadingBar() {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        CircularProgressIndicator(color = AccentColor)
     }
 }

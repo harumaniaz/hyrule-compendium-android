@@ -21,7 +21,7 @@ import com.example.hyrulecompendium.ui.theme.HcTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryFilterGroup(
-    categoryList: List<CategoryType>,
+    categories: List<CategoryType>,
     selectedItem: CategoryType,
     onClickItem: (CategoryType) -> Unit = {}
 ) {
@@ -31,7 +31,7 @@ fun CategoryFilterGroup(
             .padding(top = 10.dp, bottom = 12.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        itemsIndexed(categoryList) { index, item ->
+        itemsIndexed(categories) { index, item ->
             if (index == 0) {
                 Spacer(modifier = Modifier.width(10.dp))
             }
@@ -42,7 +42,7 @@ fun CategoryFilterGroup(
                 label = { Text(text = item.label) },
             )
 
-            if (index == categoryList.lastIndex) {
+            if (index == categories.lastIndex) {
                 Spacer(modifier = Modifier.width(10.dp))
             }
         }
@@ -53,13 +53,13 @@ fun CategoryFilterGroup(
 @Composable
 fun CategoryFilterGroupPreview() {
     CategoryType.initialize(LocalContext.current)
-    val categoryList = listOf(*CategoryType.values())
+    val categories = listOf(*CategoryType.values())
 
     HcTheme {
         HcScaffold {
             CategoryFilterGroup(
-                categoryList = categoryList,
-                selectedItem = categoryList[0]
+                categories = categories,
+                selectedItem = categories[0]
             )
         }
     }

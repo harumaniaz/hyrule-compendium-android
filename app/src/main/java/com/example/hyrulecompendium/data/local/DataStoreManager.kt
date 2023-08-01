@@ -18,9 +18,10 @@ class DataStoreManager(context: Context) {
 
     private val dataStore = context.dataStore
 
-    fun getGameType() = dataStore.data.map {
-        val id = it[GAME_TYPE] ?: GameType.BOTW.id
-        GameType.from(id)
+    fun getGameType() = dataStore.data.map { preferences ->
+        preferences[GAME_TYPE]?.let {
+            GameType.from(id = it)
+        } ?: GameType.BOTW
     }
 
     suspend fun saveGameType(type: GameType) {
